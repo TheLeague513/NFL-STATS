@@ -1,0 +1,35 @@
+# .github/workflows/tune-weights.yml
+# Manual-only workflow: fits the model weights by regression on
+# 2023-2025 and commits data/tuned_weights.txt with the results.
+# Run it from the Actions tab whenever you want refreshed weights.
+name: Tune model weights
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pandas pyarrow numpy
+
+      - name: Fit weights
+        run: python tune_weights.py
+
+      - name: Commit and push results
+        run: |
+          git config user.name "stats-bot"
+          git config user.email "actions@github.com"
+          git add data/tuned_weights.txt
+          git diff --cached --quiet || git commit -m "Tuned weights $(date -u +%F)"
+          git push
