@@ -1,0 +1,20 @@
+TUNED WEIGHTS — paste into the Settings tab
+==============================================
+HFA (points)                       2.23
+Weight: Net PPG                    0.63
+Weight: EPA/Play                 -24.97
+Weight: Success Rate              13.49
+Weight: Explosive %              -12.51
+Weight: Red Zone TD %             -0.74
+Weight: Sack Rates               -10.33
+Weight: Yards/Play                 3.78
+Weight: 3rd Down                  -1.11
+Weight: Turnover Margin            1.80
+
+Sample: 624 games, weeks 5-18, seasons [2023, 2024, 2025]
+Out-of-sample model RMSE : 13.19
+Closing line RMSE        : 12.26
+
+Notes: negative/small values are fine (collinearity —
+redundant stats get shrunk once EPA carries the signal).
+Paste all values as-is, including HFA.
