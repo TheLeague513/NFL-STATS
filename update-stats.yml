@@ -1,0 +1,37 @@
+# .github/workflows/update-stats.yml
+# Runs every Tuesday and Friday morning (and on demand) — downloads
+# nflverse play-by-play, rebuilds data/nfl_team_stats.csv, commits it.
+name: Update NFL team stats
+
+on:
+  schedule:
+    - cron: "0 11 * * 2"   # Tuesday 11:00 UTC (~6-7am ET)
+    - cron: "0 11 * * 5"   # Friday 11:00 UTC
+  workflow_dispatch: {}     # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pandas pyarrow
+
+      - name: Build stats table
+        run: python build_stats.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "stats-bot"
+          git config user.email "actions@github.com"
+          git add data/nfl_team_stats.csv
+          git diff --cached --quiet || git commit -m "Update team stats $(date -u +%F)"
+          git push
